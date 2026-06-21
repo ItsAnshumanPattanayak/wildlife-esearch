@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import logging
+import os
 
 from app.routes import identify, search
 
@@ -54,10 +55,16 @@ async def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
 
+# This is the CORRECTED part
 if __name__ == "__main__":
+    import os
+    # Get PORT from environment variable (for Render deployment)
+    # If not found, use 8000 (for local development)
+    port = int(os.environ.get("PORT", 8000))
+    
     uvicorn.run(
-        "main:app",
+        "app.main:app",  # CORRECTED: was "main:app"
         host="0.0.0.0",
-        port=8000,
-        reload=True
+        port=port,       # CORRECTED: uses environment variable
+        reload=False     # CORRECTED: False for production
     )
