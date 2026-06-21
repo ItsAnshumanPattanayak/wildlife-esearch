@@ -1,9 +1,9 @@
-//import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 // Components
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';  // ← ADD THIS
 import Home from './components/Home';
 import CameraSearch from './components/CameraSearch';
 import TextSearch from './components/TextSearch';
@@ -24,6 +24,7 @@ function App() {
             <Route path="/animal/:name" element={<AnimalDetails />} />
           </Routes>
         </main>
+        <Footer />  {/* ← ADD THIS */}
         <Toaster 
           position="top-right"
           toastOptions={{

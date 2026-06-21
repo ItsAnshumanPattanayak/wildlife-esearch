@@ -1,6 +1,5 @@
-//import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaCamera, FaSearch, FaShieldAlt, FaMedkit, FaBook } from 'react-icons/fa';
+import { FaCamera, FaSearch, FaShieldAlt, FaMedkit, FaBook, FaGithub, FaEnvelope, FaUniversity, FaBrain } from 'react-icons/fa';
 
 const Home = () => {
   return (
@@ -98,6 +97,86 @@ const Home = () => {
           <AnimalCard emoji="🐧" name="Penguin" />
         </div>
       </div>
+
+      {/* Developer Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl shadow-2xl p-8 text-white mb-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-6">
+            <FaBrain className="text-6xl mx-auto mb-4 animate-pulse" />
+            <h2 className="text-4xl font-bold mb-3">👨‍💻 Meet the Developer</h2>
+          </div>
+          
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+            <h3 className="text-3xl font-bold mb-3">Anshuman Pattanayak</h3>
+            
+            <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-4 text-lg">
+              <div className="flex items-center gap-2">
+                <FaUniversity className="text-2xl" />
+                <div className="text-left">
+                  <p className="font-semibold">Centurion University BBSR</p>
+                  <p className="text-sm text-gray-200">B.Tech 4th Year</p>
+                </div>
+              </div>
+              
+              <div className="hidden md:block text-3xl">•</div>
+              
+              <div className="flex items-center gap-2">
+                <FaBrain className="text-2xl" />
+                <div className="text-left">
+                  <p className="font-semibold">AI & ML Expert</p>
+                  <p className="text-sm text-gray-200">Artificial Intelligence Specialist</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-lg mb-6 leading-relaxed max-w-2xl mx-auto">
+            Passionate about creating AI-powered solutions that make a difference in wildlife conservation 
+            and education. This project combines <span className="font-bold">Computer Vision</span>, 
+            <span className="font-bold"> Machine Learning</span>, and 
+            <span className="font-bold"> Full-Stack Development</span> to help people understand and protect wildlife.
+          </p>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+            <h4 className="text-xl font-bold mb-4">🛠️ Technologies Used</h4>
+            <div className="flex flex-wrap justify-center gap-3">
+              <TechBadge>React</TechBadge>
+              <TechBadge>Python</TechBadge>
+              <TechBadge>FastAPI</TechBadge>
+              <TechBadge>Node.js</TechBadge>
+              <TechBadge>MongoDB</TechBadge>
+              <TechBadge>TailwindCSS</TechBadge>
+              <TechBadge>Computer Vision</TechBadge>
+              <TechBadge>REST APIs</TechBadge>
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-4 justify-center mb-4">
+            <a
+              href="mailto:anshumanpattanayak931@gmail.com"
+              className="bg-white text-purple-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition inline-flex items-center gap-2 shadow-lg"
+            >
+              <FaEnvelope className="text-xl" />
+              <span>Email Me</span>
+            </a>
+            <a
+              href="https://github.com/ItsAnshumanPattanayak"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition inline-flex items-center gap-2 shadow-lg border-2 border-white/50"
+            >
+              <FaGithub className="text-xl" />
+              <span>GitHub Profile</span>
+            </a>
+          </div>
+
+          <div className="border-t border-white/30 pt-6">
+            <p className="text-sm text-gray-200">
+              💡 Have questions, suggestions, or want to collaborate? Feel free to reach out!
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -130,6 +209,12 @@ const AnimalCard = ({ emoji, name }) => (
     <div className="text-5xl mb-2">{emoji}</div>
     <p className="font-semibold">{name}</p>
   </Link>
+);
+
+const TechBadge = ({ children }) => (
+  <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold border border-white/30">
+    {children}
+  </span>
 );
 
 export default Home;
