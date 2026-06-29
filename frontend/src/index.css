@@ -1,3 +1,10 @@
+/* Leaflet CSS - ADD THIS AT THE VERY TOP */
+@import 'leaflet/dist/leaflet.css';
+
+/* Existing styles below */
+
+
+/* ... rest of your CSS ... */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

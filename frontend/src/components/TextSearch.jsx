@@ -3,6 +3,7 @@ import { FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../services/api';
+import SearchHistory from './SearchHistory';
 
 const TextSearch = () => {
   const [query, setQuery] = useState('');
@@ -44,7 +45,7 @@ const TextSearch = () => {
         <h1 className="text-4xl font-bold mb-2">🔍 Search Animals</h1>
         <p className="text-gray-600">Search by animal name to get detailed information</p>
       </div>
-
+       <SearchHistory />
       {/* Search Form */}
       <form onSubmit={handleSearch} className="mb-12">
         <div className="max-w-2xl mx-auto">
