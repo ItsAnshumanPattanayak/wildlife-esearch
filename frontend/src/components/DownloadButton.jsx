@@ -8,17 +8,27 @@ const DownloadButton = ({ animalData }) => {
       toast.loading('Generating PDF...');
       
       const doc = new jsPDF();
+      let yPos = 20;
       
       doc.setFontSize(20);
-      doc.text(animalData.animal, 20, 20);
+      doc.setFont('helvetica', 'bold');
+      doc.text(animalData.animal, 20, yPos);
+      yPos += 10;
       
-      doc.setFontSize(12);
-      doc.text(animalData.details?.scientific_name || '', 20, 30);
+      if (animalData.details?.scientific_name) {
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'italic');
+        doc.text(animalData.details.scientific_name, 20, yPos);
+        yPos += 15;
+      }
       
-      doc.setFontSize(10);
-      const description = animalData.details?.description || '';
-      const splitText = doc.splitTextToSize(description.substring(0, 500), 170);
-      doc.text(splitText, 20, 40);
+      if (animalData.details?.description) {
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        const desc = animalData.details.description.substring(0, 500);
+        const splitText = doc.splitTextToSize(desc, 170);
+        doc.text(splitText, 20, yPos);
+      }
       
       doc.save(`${animalData.animal}_info.pdf`);
       
@@ -27,11 +37,12 @@ const DownloadButton = ({ animalData }) => {
     } catch (error) {
       toast.dismiss();
       toast.error('Failed to generate PDF');
+      console.error('PDF error:', error);
     }
   };
 
   return (
-    <button onClick={downloadPDF} className="btn-secondary">
+    <button onClick={downloadPDF} className="btn-secondary inline-flex items-center gap-2">
       <FaDownload /> Download PDF
     </button>
   );

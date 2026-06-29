@@ -18,7 +18,7 @@ const SearchHistory = () => {
     };
 
     loadHistory();
-  }, []); // Empty array is correct here
+  }, []);
 
   const clearHistory = () => {
     if (window.confirm('Clear all search history?')) {
@@ -95,8 +95,7 @@ const SearchHistory = () => {
   );
 };
 
-// Export function - RED LINE FIX
-export function addToSearchHistory(animalName, emoji = '🐾') {
+export function addToSearchHistory(animalName, emoji) {
   try {
     const saved = localStorage.getItem('animalSearchHistory');
     const history = saved ? JSON.parse(saved) : [];
@@ -106,7 +105,7 @@ export function addToSearchHistory(animalName, emoji = '🐾') {
     const newHistory = [
       { 
         name: animalName, 
-        emoji: emoji,
+        emoji: emoji || '🐾',
         timestamp: new Date().toISOString() 
       },
       ...filtered
