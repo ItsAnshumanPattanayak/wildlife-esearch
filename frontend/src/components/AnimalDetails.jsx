@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react'; // Add useCallback
 import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -48,10 +49,45 @@ const AnimalDetails = () => {
     }
   }, [name, getAnimalEmoji]); // Now properly memoized
 
-  useEffect(() => {
-    loadAnimalDetails();
-  }, [loadAnimalDetails]); // No more warning!
+  const AnimalDetails = () => {
+  const { name } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // Move function INSIDE useEffect - FIX RED LINE
+  useEffect(() => {
+    const loadAnimalDetails = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get(`/animal/${name}`);
+        if (response.data.success) {
+          setData(response.data);
+          
+          // Add to search history
+          const emoji = getAnimalEmoji(name);
+          addToSearchHistory(name, emoji);
+        }
+      } catch (error) {
+        console.error('Error loading details:', error);
+        toast.error('Failed to load animal details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAnimalDetails();
+  }, [name]); // Only depends on 'name' - NO RED LINE!
+
+  // Helper function
+  function getAnimalEmoji(animalName) {
+    const emojiMap = {
+      'lion': '🦁', 'tiger': '🐯', 'elephant': '🐘',
+      'bear': '🐻', 'wolf': '🐺', 'shark': '🦈',
+    };
+    return emojiMap[animalName?.toLowerCase()] || '🐾';
+  }
+
+  // ... rest of component
   if (loading) {
     return (
       <div className="text-center py-20">
