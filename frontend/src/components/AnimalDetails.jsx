@@ -1,34 +1,56 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // Add useCallback
 import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import api from '../services/api';
+import { addToSearchHistory } from './SearchHistory';
+import ImageGallery from './ImageGallery';
+import ConservationBadge from './ConservationBadge';
+import QuickFacts from './QuickFacts';
+import DistributionMap from './DistributionMap';
+import DownloadButton from './DownloadButton';
+import ShareButtons from './ShareButtons';
+import SimilarAnimals from './SimilarAnimals';
 
 const AnimalDetails = () => {
   const { name } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Move function INSIDE useEffect
-    const loadAnimalDetails = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`/animal/${name}`);
-        if (response.data.success) {
-          setData(response.data);
-        }
-      } catch (error) {
-        console.error('Error loading details:', error);
-        toast.error('Failed to load animal details');
-      } finally {
-        setLoading(false);
-      }
+  // Helper function for emojis
+  const getAnimalEmoji = useCallback((animalName) => {
+    const emojiMap = {
+      'lion': '🦁', 'tiger': '🐯', 'elephant': '🐘',
+      'bear': '🐻', 'wolf': '🐺', 'fox': '🦊',
+      'eagle': '🦅', 'owl': '🦉', 'shark': '🦈',
+      'whale': '🐋', 'dolphin': '🐬', 'penguin': '🐧',
+      'snake': '🐍', 'crocodile': '🐊', 'turtle': '🐢',
+      'leopard': '🐆', 'cheetah': '🐆', 'panda': '🐼',
     };
+    return emojiMap[animalName?.toLowerCase()] || '🐾';
+  }, []);
 
-    // Call it
+  const loadAnimalDetails = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/animal/${name}`);
+      if (response.data.success) {
+        setData(response.data);
+        
+        // Add to search history
+        addToSearchHistory(name, getAnimalEmoji(name));
+      }
+    } catch (error) {
+      console.error('Error loading details:', error);
+      toast.error('Failed to load animal details');
+    } finally {
+      setLoading(false);
+    }
+  }, [name, getAnimalEmoji]); // Now properly memoized
+
+  useEffect(() => {
     loadAnimalDetails();
-  }, [name]); // Only 'name' in dependency array
+  }, [loadAnimalDetails]); // No more warning!
 
   if (loading) {
     return (
@@ -52,16 +74,31 @@ const AnimalDetails = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Back Button */}
-      <Link to="/search" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6">
-        <FaArrowLeft /> Back to Search
-      </Link>
+      {/* ... rest of your component stays the same ... */}
+      {/* Back Button and Action Buttons */}
+      <div className="flex items-center justify-between mb-6">
+        <Link to="/search" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700">
+          <FaArrowLeft /> Back to Search
+        </Link>
+        
+        <div className="flex gap-3">
+          {data && <DownloadButton animalData={data} />}
+          {data && <ShareButtons animalName={data.animal} />}
+        </div>
+      </div>
 
       {/* Header */}
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
         <h1 className="text-5xl font-bold text-purple-600 capitalize mb-4">
           {data.animal}
         </h1>
+
+        {/* Conservation Badge */}
+        {data.details?.conservation_status && (
+          <div className="mb-6">
+            <ConservationBadge status={data.details.conservation_status} />
+          </div>
+        )}
         
         {data.details && (
           <>
@@ -89,7 +126,27 @@ const AnimalDetails = () => {
             )}
           </>
         )}
+
+        {/* Quick Facts */}
+        {data.details && (
+          <QuickFacts animal={data.details} />
+        )}
+
+        {/* Distribution Map */}
+        {data.details?.distribution && (
+          <DistributionMap 
+            animalName={data.animal} 
+            distribution={data.details.distribution} 
+          />
+        )}
       </div>
+
+      {/* Image Gallery */}
+      {data.images && data.images.length > 0 && (
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
+          <ImageGallery images={data.images} animalName={data.animal} />
+        </div>
+      )}
 
       {/* Protection Info */}
       {data.protection && (
@@ -152,7 +209,7 @@ const AnimalDetails = () => {
 
       {/* Medical Info */}
       {data.medical && (
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
             🏥 Medical Information
           </h2>
@@ -209,6 +266,11 @@ const AnimalDetails = () => {
           )}
         </div>
       )}
+
+      {/* Similar Animals */}
+      <div className="bg-white rounded-2xl shadow-lg p-8">
+        <SimilarAnimals currentAnimal={data.animal} />
+      </div>
     </div>
   );
 };

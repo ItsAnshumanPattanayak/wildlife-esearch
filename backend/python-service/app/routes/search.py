@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query
-from typing import Optional
+from typing import Optional, List
 import logging
 
 from app.services.animal_service import AnimalService
@@ -52,13 +52,15 @@ async def get_animal_details(animal_name: str):
         details = await animal_service.get_animal_details(animal_name)
         protection = await animal_service.get_protection_info(animal_name)
         medical = await animal_service.get_medical_info(animal_name)
+        images = await animal_service.get_animal_images(animal_name)  # ADDED
         
         return {
             "success": True,
             "animal": animal_name,
             "details": details,
             "protection": protection,
-            "medical": medical
+            "medical": medical,
+            "images": images  # ADDED
         }
         
     except Exception as e:
