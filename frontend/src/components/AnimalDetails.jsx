@@ -4,13 +4,15 @@ import { FaArrowLeft } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import { addToSearchHistory } from './SearchHistory';
-import ImageGallery from './ImageGallery';
 import ConservationBadge from './ConservationBadge';
 import QuickFacts from './QuickFacts';
-import DistributionMap from './DistributionMap';
 import DownloadButton from './DownloadButton';
 import ShareButtons from './ShareButtons';
 import SimilarAnimals from './SimilarAnimals';
+
+// Lazy load heavy components
+import DistributionMap from './DistributionMap';
+import ImageGallery from './ImageGallery';
 
 const AnimalDetails = () => {
   const { name } = useParams();
@@ -22,14 +24,20 @@ const AnimalDetails = () => {
       setLoading(true);
       try {
         const response = await api.get(`/animal/${name}`);
+        console.log('📦 API Response:', response.data);
+        
         if (response.data.success) {
           setData(response.data);
+          
+          // Log what we received
+          console.log('🖼️ Images:', response.data.images);
+          console.log('🗺️ Distribution:', response.data.details?.distribution);
           
           const emoji = getAnimalEmoji(name);
           addToSearchHistory(name, emoji);
         }
       } catch (error) {
-        console.error('Error loading details:', error);
+        console.error('❌ Error loading details:', error);
         toast.error('Failed to load animal details');
       } finally {
         setLoading(false);
@@ -63,15 +71,14 @@ const AnimalDetails = () => {
     return (
       <div className="text-center py-20">
         <h2 className="text-3xl font-bold mb-4">Animal not found</h2>
-        <Link to="/search" className="btn-primary">
-          Go to Search
-        </Link>
+        <Link to="/search" className="btn-primary">Go to Search</Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto">
+      {/* Header with buttons */}
       <div className="flex items-center justify-between mb-6">
         <Link to="/search" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700">
           <FaArrowLeft /> Back to Search
@@ -83,17 +90,20 @@ const AnimalDetails = () => {
         </div>
       </div>
 
+      {/* Main Info Card */}
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
         <h1 className="text-5xl font-bold text-purple-600 capitalize mb-4">
           {data.animal}
         </h1>
 
+        {/* Conservation Badge */}
         {data.details?.conservation_status && (
           <div className="mb-6">
             <ConservationBadge status={data.details.conservation_status} />
           </div>
         )}
         
+        {/* Basic Info */}
         {data.details && (
           <>
             <p className="text-xl text-gray-600 italic mb-6">
@@ -121,27 +131,31 @@ const AnimalDetails = () => {
           </>
         )}
 
+        {/* Quick Facts */}
         {data.details && <QuickFacts animal={data.details} />}
 
+        {/* Distribution Map */}
         {data.details?.distribution && (
-          <DistributionMap 
-            animalName={data.animal} 
-            distribution={data.details.distribution} 
-          />
+          <div className="my-8">
+            <DistributionMap 
+              animalName={data.animal} 
+              distribution={data.details.distribution} 
+            />
+          </div>
         )}
       </div>
 
+      {/* Image Gallery */}
       {data.images && data.images.length > 0 && (
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
           <ImageGallery images={data.images} animalName={data.animal} />
         </div>
       )}
 
+      {/* Safety & Protection */}
       {data.protection && (
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
-            🛡️ Safety & Protection
-          </h2>
+          <h2 className="text-3xl font-bold mb-6">🛡️ Safety & Protection</h2>
           
           <div className="grid md:grid-cols-2 gap-4 mb-6">
             <div className="bg-yellow-50 p-4 rounded-lg">
@@ -195,11 +209,10 @@ const AnimalDetails = () => {
         </div>
       )}
 
+      {/* Medical Information */}
       {data.medical && (
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
-          <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
-            🏥 Medical Information
-          </h2>
+          <h2 className="text-3xl font-bold mb-6">🏥 Medical Information</h2>
 
           <div className="bg-red-50 border-l-4 border-red-500 p-6 mb-6">
             <h3 className="text-xl font-bold mb-3 text-red-800">Emergency Steps</h3>
@@ -254,6 +267,7 @@ const AnimalDetails = () => {
         </div>
       )}
 
+      {/* Similar Animals */}
       <div className="bg-white rounded-2xl shadow-lg p-8">
         <SimilarAnimals currentAnimal={data.animal} />
       </div>
